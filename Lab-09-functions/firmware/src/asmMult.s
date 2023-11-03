@@ -72,18 +72,18 @@ asmUnpack:
     
     /*** STUDENTS: Place your asmUnpack code BELOW this line!!! **************/
     
-    PUSH {R4-R11,LR}   @ Push registers R4-R11 and the Link Register (LR) onto the stack.
+    PUSH {R4-R11,LR}	@ Push registers R4-R11 and the Link Register (LR) onto the stack.
 
-    MOV R4, R0, ASR 16  @Move the value in R0 right-shifted (arithmetic) by 16 bits into R4.
+    MOV R4, R0, ASR 16  @Move the value in R0(packed value) right-shifted (arithmetic) by 16 bits into R4.
 
-    MOV R5, R0, LSL 16  @Move the value in R0 left-shifted by 16 bits into R5.
-    ASR R5, R5, 16     @Right-shift R5 by 16 bits to sign-extend the value.
+    MOV R5, R0, LSL 16  @Move the value in R0(packed value) left-shifted by 16 bits into R5.
+    ASR R5, R5, 16	@Right-shift R5 by 16 bits to sign-extend the value.
 
-    STR R4, [R1]        @Store the value in R4 to the memory location pointed to by R1.
-    STR R5, [R2]        @Store the value in R5 to the memory location pointed to by R2.
+    STR R4, [R1]        @Store the value in R4 to the memory location pointed to by R1(unpacked A value).
+    STR R5, [R2]        @Store the value in R5 to the memory location pointed to by R2(unpacked B value)
 
-    POP {R4-R11,LR}    @Pop the saved registers (R4-R11) and LR from the stack.
-    BX LR              @Branch and exchange (return) to the address stored in LR.
+    POP {R4-R11,LR}	@Pop the saved registers (R4-R11) and LR from the stack.
+    BX LR		@Branch and exchange (return) to the address stored in LR.
     /*** STUDENTS: Place your asmUnpack code ABOVE this line!!! **************/
 
 
@@ -105,27 +105,27 @@ asmUnpack:
  */
 asmAbs:  
     /*** STUDENTS: Place your asmAbs code BELOW this line!!! **************/
-    PUSH {R4-R11,LR}   @Push registers R4-R11 and the Link Register (LR) onto the stack.
+    PUSH {R4-R11,LR}	@Push registers R4-R11 and the Link Register (LR) onto the stack.
 
-    CMP R0, #0         @Compare the value in R0 with 0.
+    CMP R0, #0		@Compare the value in signed value with 0.
     BLT negative_number @Branch to negative_number if the result of the comparison is less than (negative).
 
     MOV R3, #0          @Load the value 0 into R3.
-    STR R3, [R2]        @Store the value in R3 to the memory location pointed to by R2.
+    STR R3, [R2]        @Store the value in R3 to the memory location pointed to by sign bit.
 
     continus:           @Label for the continuation of the code.
 
-    STR R0, [R1]        @Store the value in R0 to the memory location pointed to by R1.
+    STR R0, [R1]        @Store the value in abs signed value to the memory location pointed to by R1(absolute value).
 
-    POP {R4-R11,LR}    @Pop the saved registers (R4-R11) and LR from the stack.
-    BX LR              @Branch and exchange (return) to the address stored in LR.
+    POP {R4-R11,LR}	@Pop the saved registers (R4-R11) and LR from the stack.
+    BX LR		@Branch and exchange (return) to the address stored in LR.
 
-    negative_number:   @Label for the negative_number code.
+    negative_number:	@Label for the negative_number code.
 
-    MOV R3, #1         @Load the value 1 into R3.
-    STR R3, [R2]       @Store the value in R3 to the memory location pointed to by R2.
+    MOV R3, #1		@Load the value 1 into R3.
+    STR R3, [R2]	@Store the value in R3 to the memory location pointed to by sign bit.
 
-    RSB R0, R0, #0     @Reverse subtract R0 from 0, effectively negating the value in R0.
+    RSB R0, R0, #0	@Reverse subtract R0(signed value) from 0, effectively negating the value in R0.
 
     B continus         @Unconditional branch to the "continus" label, continuing the code.
 
@@ -146,19 +146,19 @@ asmMult:
 
     /*** STUDENTS: Place your asmMult code BELOW this line!!! **************/
     PUSH {R4-R11,LR}   @ Push registers R4-R11 and the Link Register (LR) onto the stack.
-    MOV R5, #0         @ Initialize R5 to 0.
+    MOV R5, #0         @ Initialize R5(temp initial product) to 0.
 
     multiply_loop:
-    CMP R1, #0         @ Compare the value in R1 with 0.
-    BEQ multiply_done   @ If R1 is 0, branch to the multiply_done label.
+    CMP R1, #0         @ Compare the value in multiplier with 0.
+    BEQ multiply_done  @ If multiplier is 0, branch to the multiply_done label.
 
-    ADD R5, R5, R0     @ Add the value in R0 to the running total in R5.
-    SUB R1, R1, #1     @ Decrement R1 by 1 (effectively counting down).
+    ADD R5, R5, R0     @ Add the value in multiplicand to the running total in temp initial product.
+    SUB R1, R1, #1     @ Decrement multiplier by 1 (effectively counting down).
 
-    B multiply_loop     @ Branch back to the multiply_loop label to continue the loop.
+    B multiply_loop    @ Branch back to the multiply_loop label to continue the loop.
 
     multiply_done:
-    MOV R0, R5         @ Move the final result in R5 to R0.
+    MOV R0, R5         @ Move the final result in temp initial product to R0(initial product).
     POP {R4-R11,LR}    @ Pop the saved registers (R4-R11) and LR from the stack.
     BX LR              @ Branch and exchange (return) to the address stored in LR.
        
@@ -184,15 +184,15 @@ asmFixSign:
     /*** STUDENTS: Place your asmFixSign code BELOW this line!!! **************/
     PUSH {R4-R11,LR}   @ Push registers R4-R11 and the Link Register (LR) onto the stack.
 
-    CMP R1, R2         @ Compare the values in R1 and R2 registers.
+    CMP R1, R2         @ Compare the values in sign bit a and sign bit b registers.
     BNE opposite_sign  @ Branch to opposite_sign if they are not equal (opposite signs).
 
     fix_done:          @ Label for the fix_done code.
     POP {R4-R11,LR}    @ Pop the saved registers (R4-R11) and LR from the stack.
     BX LR              @ Branch and exchange (return) to the address stored in LR.
 
-    opposite_sign:    @ Label for the opposite_sign code.
-    RSB R0, R0, #0    @ Reverse subtract R0 from 0, effectively negating the value in R0.
+    opposite_sign:     @ Label for the opposite_sign code.
+    RSB R0, R0, #0     @ Reverse subtract R0 from 0, effectively negating the value in R0.
     B fix_done         @ Unconditional branch to the fix_done label, completing the operation.
       
     
@@ -224,10 +224,10 @@ asmMain:
      * call asmUnpack. Have it store the output values in 
      * a_Multiplicand and b_Multiplier.
      */
-    PUSH {R4-R11,LR}
-    LDR R1,=a_Multiplicand  @Load the address of the label "a_Multiplicand" into register R1
-    LDR R2,=b_Multiplier @Load the address of the label "b_Multiplier" into register R2.
-    BL asmUnpack @This is a branch with link (BL) instruction to the subroutine called "asmUnpack."
+    PUSH {R4-R11,LR}	     @ Push registers R4-R11 and the Link Register (LR) onto the stack.
+    LDR R1,=a_Multiplicand   @ Load the address of the label "a_Multiplicand" into register R1
+    LDR R2,=b_Multiplier     @ Load the address of the label "b_Multiplier" into register R2.
+    BL asmUnpack	     @ This is a branch with link (BL) instruction to the subroutine called "asmUnpack."
 
     /* Step 2a:
      * call asmAbs for the multiplicand (A). Have it store the
@@ -237,21 +237,21 @@ asmMain:
                r1: address where to store absolute value
                r2: address where to store sign bit:
                0 = "+", 1 = "-"*/
-    LDR r0,[r1] @Load the value from the memory address pointed to by r1 into r0.
-    LDR r1, =a_Abs   @ Load the address of a_Abs into R1
-    LDR r2, =a_Sign  @ Load the address of a_Sign into R2
-    BL asmAbs     @ Call asmAbs
+    LDR r0,[r1]		     @ Load the value from the memory address pointed to by r1 into r0.
+    LDR r1, =a_Abs	     @ Load the address of a_Abs into R1
+    LDR r2, =a_Sign	     @ Load the address of a_Sign into R2
+    BL asmAbs		     @ Call asmAbs
     
 
     /* Step 2b:
      * call asmAbs for the multiplier (B). Have it store the
      * absolute value in b_Abs, and the sign in b_Sign.
      */
-    LDR r2,=b_Multiplier @Load the address of the label "b_Multiplier" into register R2.
-    LDR r0,[r2] @Load the value from the memory address pointed to by r2 into r0.
-    LDR r1, =b_Abs   @ Load the address of b_Abs into R1
-    LDR r2, =b_Sign  @ Load the address of b_Sign into R2
-    BL asmAbs     @ Call asmAbs
+    LDR r2,=b_Multiplier     @ Load the address of the label "b_Multiplier" into register R2.
+    LDR r0,[r2]		     @ Load the value from the memory address pointed to by r2 into r0.
+    LDR r1, =b_Abs	     @ Load the address of b_Abs into R1
+    LDR r2, =b_Sign	     @ Load the address of b_Sign into R2
+    BL asmAbs                @ Call asmAbs
 
     /* Step 3:
      * call asmMult. Pass a_Abs as the multiplicand, 
@@ -267,9 +267,9 @@ asmMain:
     LDR r0, [r4]             @ Load the absolute value of the multiplicand (a) from memory into r0.
     LDR r1, [r5]             @ Load the absolute value of the multiplier (b) from memory into r1.
     
-    BL asmMult        @ Call asmMult
+    BL asmMult               @ Call asmMult
     LDR R11, =init_Product   @ Load the address of init_Product into R11
-    STR r0, [R11]           @ Store the initial product in mem location init_Product
+    STR r0, [R11]            @ Store the initial product in mem location init_Product
 
 
     /* Step 4:
@@ -287,16 +287,16 @@ asmMain:
  *              r2: sign bit of originally unpacked value
  *                  of B*/
     LDR r4, =init_Product     @ Load the address of the label "init_Product" into r4.
-    LDR r5, =a_Sign          @ Load the address of the label "a_Sign" into r5.
-    LDR r6, =b_Sign          @ Load the address of the label "b_Sign" into r6.
-    LDR r0, [r4]             @ Load the initial product from memory into r0.
-    LDR r1, [r5]             @ Load the sign bit of the originally unpacked value of a_Sign into r1.
-    LDR r2, [r6]             @ Load the sign bit of the originally unpacked value of b_Sign into r2.
+    LDR r5, =a_Sign           @ Load the address of the label "a_Sign" into r5.
+    LDR r6, =b_Sign           @ Load the address of the label "b_Sign" into r6.
+    LDR r0, [r4]              @ Load the initial product from memory into r0.
+    LDR r1, [r5]              @ Load the sign bit of the originally unpacked value of a_Sign into r1.
+    LDR r2, [r6]              @ Load the sign bit of the originally unpacked value of b_Sign into r2.
     
-    BL asmFixSign          @ Call asmFixSign
+    BL asmFixSign             @ Call asmFixSign
 
-    LDR R11, =final_Product  @ Load the address of final_Product into R11
-    STR r0, [R11]           @ Store the final product in mem location final_Product
+    LDR R11, =final_Product   @ Load the address of final_Product into R11
+    STR r0, [R11]             @ Store the final product in mem location final_Product
 
 
     /* Step 5:
@@ -306,7 +306,7 @@ asmMain:
      *    can access it.
      */
     POP {R4-R11,LR}    @ Pop the saved registers (R4-R11) and LR from the stack.
-    BX LR
+    BX LR	       @ Branch and exchange (return) to the address stored in LR.
 
     
     /*** STUDENTS: Place your asmMain code ABOVE this line!!! **************/
